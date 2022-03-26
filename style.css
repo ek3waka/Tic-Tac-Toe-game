@@ -1,0 +1,199 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+
+
+
+
+
+:root {
+    --padding-table: 0.75rem;
+    --table-cell-height: 4rem
+}
+
+
+
+
+
+body {
+    background-color: #e2e8f0;
+    margin: 0;
+    font-family: 'Rubik', Roboto, sans-serif;
+    font-size: 14px;
+}
+
+main {
+    width: 1400px;
+    height: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    margin: auto;
+}
+
+.header {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.description {
+    width: 100%;
+    height: 40px;
+    margin-top: 50px;    
+    text-align: center;
+    font-size: 1.25rem;
+}
+
+.game-field {
+    background-color: inherit;
+    height: 450px;
+    width: 450px;
+    
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    gap: 4px
+
+}
+
+.game-cell {
+    box-sizing: content-box;
+    background-color: #b19cd3;
+    /* border: 1px solid black; */
+    font-size: 4rem;
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    font-weight: 800;
+    
+}
+
+.game-cell:hover {
+    background-color: #6e6085;
+}
+
+.filled {
+    transition: all 0.5s;
+}
+
+.restart {
+    background-color: transparent;
+    border: none;
+    font-size: 1.5rem;
+    font-weight: 500;
+    font-family: 'Rubik', Roboto, sans-serif;
+}
+
+.restart:hover {
+    color: #774eb8;
+    font-weight: 600;
+}
+
+.players {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    font-size: 1.35rem;
+}
+
+.player-name {
+    display: flex;
+    align-items: center;
+}
+
+.players-score {
+    font-size: 1.75rem;
+}
+
+
+input {
+    margin-left: 20px;
+    height: 30px;
+    width: 200px;
+    border-radius: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
+    font-size: 1.1rem;
+    -webkit-appearance: none;
+    border: 1px solid lightgrey;
+}
+
+input:focus {
+    border: 1px solid #774eb8;
+    outline: 0;
+}
+
+.start-game {
+    background-color: transparent;
+    border: none;
+    flood-color: #b19cd3;
+    font-size: 1.5rem;
+    font-weight: 500;
+    font-family: 'Rubik', Roboto, sans-serif;
+}
+
+.start-game:hover {
+    color: #774eb8;
+    font-weight: 600;
+}
+
+.prestart {
+    gap: 100px;
+    justify-content: flex-start;
+}
+
+.hidden {
+    visibility: hidden;
+    position: absolute;
+}
+
+.prestart {
+    gap: 100px;
+    justify-content: flex-start;
+}
