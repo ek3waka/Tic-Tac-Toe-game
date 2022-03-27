@@ -1,5 +1,5 @@
 let gameBoard = {
-    board: ['◯', '✕', '◯', '✕', '◯', '✕', '◯', '✕', '◯'],
+    board: ['', '', '', '', '', '', '', '', ''],
     winningCombinations: [
            [0, 1, 2], 
            [0, 3, 6], 
@@ -10,19 +10,23 @@ let gameBoard = {
            [6, 7, 8], 
            [2, 5, 8] 
                         ],
+      
 
 }
 
 
+
+
 let scores = document.querySelector('.scores');
 const main = document.querySelector('main');
-
+const cellGrid = document.createElement('div');
+const restartButton = document.createElement('button');
 
 
 
 function createCells() {
       
-      const cellGrid = document.createElement('div');
+      
       cellGrid.classList.add('game-field');
       main.appendChild(cellGrid);
 
@@ -30,18 +34,21 @@ function createCells() {
         const cell = document.createElement('div');
         cell.classList.add('game-cell');
         cell.id = i;
+        cell.textContent = gameBoard.board[i];
         cellGrid.appendChild(cell);
       
       }
 
-      const restartButton = document.createElement('button');
-      restartButton.classList.add('restart');
-      restartButton.textContent = 'Restart game';
-      main.appendChild(restartButton);
+      
+      
       
 }
 
-
+function addRestartButton() {
+      restartButton.classList.add('restart');
+      restartButton.textContent = 'Restart game';
+      main.appendChild(restartButton);
+}
 
 const gameFlow = {
 
@@ -49,13 +56,21 @@ const gameFlow = {
 
 
 
-const player = (name) => {
+const player = (name, sign) => {
     const getName  = () => name;
     let playerSigns = [];
+    let playerScore = 0;
+    const clearSigns = () => {
+        playerSigns.length = 0
+    }
+    const getSign = () => sign;
     const addSign = sign => {
         playerSigns.push(sign)
     }
-    return {playerSigns, addSign, getName}
+    const addScore = () => {
+      playerScore += 1
+    }
+    return {playerSigns, addSign, getName, getSign, playerScore, addScore, clearSigns}
 }
 
 let start = document.querySelector('.start-game');
@@ -65,8 +80,8 @@ let player1, player2
 
 function startGame() {
 
-  player1 = player(document.getElementById('player1').value);
-  player2 = player(document.getElementById('player2').value);
+  player1 = player(document.getElementById('player1').value, '✕');
+  player2 = player(document.getElementById('player2').value, '◯');
 
   let player1name = document.getElementById('player1name');
   let plater2name = document.getElementById('player2name');
@@ -79,31 +94,29 @@ function startGame() {
   document.getElementById('player2').classList.add('hidden');
 
   createCells();
-
+  addRestartButton();
   start.classList.add('hidden');
   scores.classList.remove('hidden');
+  const restart = document.querySelector('.restart');
+  
+  restart.addEventListener('click', () => restartGame(cells))
+
+  const cells = document.querySelectorAll('.game-cell');
+  cells.forEach ((cell) => {
+        cell.addEventListener('click', 
+        () => cell.textContent = '◯')
+  });
 
   return player1, player2
 
 }
 
 
-
-const cells = document.querySelectorAll('.game-cell');
-
-cells.forEach ((cell) => {
-        cell.addEventListener('click', 
-        () => cell.textContent = '◯')
-  });
-
-
-const restart = document.querySelector('.restart');
-
-restart.addEventListener('click', () => restartGame())
-
-function restartGame() {
+function restartGame(cells) {
   cells.forEach ((cell) => { 
-    cell.textContent = ''
+    gameBoard.board = ['', '', '', '', '', '', '', '', ''];
+    //обнулить игроков, обнулить счет, обнулить gameflow, скрыть поле, показать инпуты
+    
   });
 }
 
@@ -115,4 +128,16 @@ function isWin () {
 
 function changeScore (player1Score, player2Score) {
     score.textContent=`${player1Score} - ${player2Score}`
+}
+
+
+function endGame(winner) {
+    winner.addScore();
+    //gameBoard.board.clear();
+    player1.clearSigns();
+    player2.clearSigns();
+    //endgamemessage();
+    changeScore(player1.playerScore, player2.playerScore);
+    createCells();
+
 }
