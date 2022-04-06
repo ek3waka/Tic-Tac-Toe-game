@@ -197,3 +197,45 @@ input:focus {
     gap: 100px;
     justify-content: flex-start;
 }
+
+
+
+/* Popup container */
+body {
+    position: relative;
+}
+/* The actual popup (appears on top) */
+body .popuptext {
+    visibility: hidden;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.65);
+    color: rgb(255, 255, 255);
+    text-align: center;
+    
+    padding: auto;
+    position: absolute;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+/* Toggle this class when clicking on the popup container (hide and show the popup) */
+body .show {
+    visibility: visible;
+    -webkit-animation: fadeIn 1s;
+    animation: fadeIn 1s
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity:1 ;}
+}

@@ -1,3 +1,33 @@
+Array.prototype.equals = function (array, strict) {
+  if (!array)
+      return false;
+
+  if (arguments.length == 1)
+      strict = true;
+
+  if (this.length != array.length)
+      return false;
+
+  for (var i = 0; i < this.length; i++) {
+      if (this[i] instanceof Array && array[i] instanceof Array) {
+          if (!this[i].equals(array[i], strict))
+              return false;
+      }
+      else if (strict && this[i] != array[i]) {
+          return false;
+      }
+      else if (!strict) {
+          return this.sort().equals(array.sort(), true);
+      }
+  }
+  return true;
+}
+
+Array.prototype.hasAll = function(a) {
+  let hash = this.reduce(function(acc, i) { acc[i] = true; return acc; }, {});
+  return a.every(function(i) { return i in hash; });
+};
+
 let gameBoard = {
     board: ['', '', '', '', '', '', '', '', ''],
     winningCombinations: [
@@ -10,7 +40,9 @@ let gameBoard = {
            [6, 7, 8], 
            [2, 5, 8] 
                         ],
-      
+    /* addGameboardSign: function (sign, id) {
+          gameBoard.board[id] = sign
+      } */
 
 }
 
@@ -21,8 +53,8 @@ let scores = document.querySelector('.scores');
 const main = document.querySelector('main');
 const cellGrid = document.createElement('div');
 const restartButton = document.createElement('button');
-
-
+const popup = document.getElementById("score");
+popup.addEventListener('click', () =>  popup.classList.toggle("show"))
 
 function createCells() {
       
@@ -37,12 +69,16 @@ function createCells() {
         cell.textContent = gameBoard.board[i];
         cellGrid.appendChild(cell);
       
-      }
+      }}
 
-      
-      
-      
-}
+function deleteCells() {
+  main.removeChild(restartButton)
+  while (cellGrid.firstChild) {
+    cellGrid.removeChild(cellGrid.firstChild);
+  }
+  
+  }
+
 
 function addRestartButton() {
       restartButton.classList.add('restart');
@@ -70,7 +106,23 @@ const player = (name, sign) => {
     const addScore = () => {
       playerScore += 1
     }
-    return {playerSigns, addSign, getName, getSign, playerScore, addScore, clearSigns}
+    const step = () => {
+
+      /* cellGrid.addEventListener('click', function(evt) {
+        if(evt.target.closest('.cell')) {
+          
+          
+           
+            console.log(evt.target.getAttribute('id'))
+        
+          }
+          }) */
+    
+
+      /* createCells() */
+
+    }
+    return {playerSigns, getName, getSign, playerScore, addScore, clearSigns, step, addSign}
 }
 
 let start = document.querySelector('.start-game');
@@ -99,37 +151,58 @@ function startGame() {
   scores.classList.remove('hidden');
   const restart = document.querySelector('.restart');
   
-  restart.addEventListener('click', () => restartGame(cells))
+  restart.addEventListener('click', () => restartGame())
+  /* let participant = player1; */
 
-  const cells = document.querySelectorAll('.game-cell');
-  cells.forEach ((cell) => {
-        cell.addEventListener('click', 
-        () => cell.textContent = '◯')
-  });
+    cellGrid.addEventListener('click', function(evt) {
+    if(evt.target.closest('.game-cell')) {
+        player1.addSign(evt.target.getAttribute('id'))
+        gameBoard.board[evt.target.getAttribute('id')] = player1.getSign()
+        deleteCells();
+        createCells();
+        addRestartButton();
+        isWin(player1)
+      }
+      })
+      
 
   return player1, player2
 
 }
 
 
-function restartGame(cells) {
-  cells.forEach ((cell) => { 
-    gameBoard.board = ['', '', '', '', '', '', '', '', ''];
-    //обнулить игроков, обнулить счет, обнулить gameflow, скрыть поле, показать инпуты
-    
-  });
+function restartGame() {
+  gameBoard.board = ['', '', '', '', '', '', '', '', ''];
+  deleteCells();
+  createCells();
+  player1.clearSigns();
+  player2.clearSigns();
+  addRestartButton()
 }
 
 //✕ ◯
 
-function isWin () {
+function isWin(player) {
+    for (let i=0; i<gameBoard.winningCombinations.length; i++) {
+      if (player.playerSigns.hasAll(gameBoard.winningCombinations[i])) {
+        
+        popup.classList.toggle("show");
+        restartGame()
+        break
+      } 
+    }
 
+      
 }
 
 function changeScore (player1Score, player2Score) {
     score.textContent=`${player1Score} - ${player2Score}`
 }
 
+/* 
+function step(player) {
+
+} */
 
 function endGame(winner) {
     winner.addScore();
@@ -139,5 +212,5 @@ function endGame(winner) {
     //endgamemessage();
     changeScore(player1.playerScore, player2.playerScore);
     createCells();
+  }
 
-}
