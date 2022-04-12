@@ -1,27 +1,3 @@
-Array.prototype.equals = function (array, strict) {
-  if (!array)
-      return false;
-
-  if (arguments.length == 1)
-      strict = true;
-
-  if (this.length != array.length)
-      return false;
-
-  for (var i = 0; i < this.length; i++) {
-      if (this[i] instanceof Array && array[i] instanceof Array) {
-          if (!this[i].equals(array[i], strict))
-              return false;
-      }
-      else if (strict && this[i] != array[i]) {
-          return false;
-      }
-      else if (!strict) {
-          return this.sort().equals(array.sort(), true);
-      }
-  }
-  return true;
-}
 
 Array.prototype.hasAll = function(a) {
   let hash = this.reduce(function(acc, i) { acc[i] = true; return acc; }, {});
@@ -50,6 +26,7 @@ let gameBoard = {
 
 
 let scores = document.querySelector('.scores');
+let playersScore = document.querySelector('.playersScore');
 const main = document.querySelector('main');
 const cellGrid = document.createElement('div');
 const restartButton = document.createElement('button');
@@ -95,17 +72,19 @@ const gameFlow = {
 const player = (name, sign) => {
     const getName  = () => name;
     let playerSigns = [];
-    let playerScore = 0;
+    let score = 0;
     const clearSigns = () => {
         playerSigns.length = 0
     }
     const getSign = () => sign;
+    const getScore = () => score
     const addSign = sign => {
         playerSigns.push(sign)
     }
-    const addScore = () => {
-      playerScore += 1
-    }
+    
+    const addScore = () => ++score
+
+
     const step = () => {
 
       /* cellGrid.addEventListener('click', function(evt) {
@@ -122,16 +101,17 @@ const player = (name, sign) => {
       /* createCells() */
 
     }
-    return {playerSigns, getName, getSign, playerScore, addScore, clearSigns, step, addSign}
+    return {playerSigns, getName, getSign, addScore, clearSigns, step, addSign, getScore}
 }
 
 let start = document.querySelector('.start-game');
 start.addEventListener('click', () => startGame())
 
 let player1, player2
+let circleTurn
 
 function startGame() {
-
+  
   player1 = player(document.getElementById('player1').value, '✕');
   player2 = player(document.getElementById('player2').value, '◯');
 
@@ -150,67 +130,96 @@ function startGame() {
   start.classList.add('hidden');
   scores.classList.remove('hidden');
   const restart = document.querySelector('.restart');
-  
   restart.addEventListener('click', () => restartGame())
-  /* let participant = player1; */
+  startRound()
 
-    cellGrid.addEventListener('click', function(evt) {
-    if(evt.target.closest('.game-cell')) {
-        player1.addSign(evt.target.getAttribute('id'))
-        gameBoard.board[evt.target.getAttribute('id')] = player1.getSign()
-        deleteCells();
-        createCells();
-        addRestartButton();
-        isWin(player1)
-      }
-      })
-      
-
-  return player1, player2
-
+  
+  
 }
 
+function startRound() {
+  circleTurn = false
+  const cellElements = document.querySelectorAll('.game-cell') 
+  
+  cellElements.forEach(cell => {
+    cell.removeEventListener('click', handleClick)
+    cell.addEventListener('click', handleClick, { once: true })
+  })
+}
+
+
+function handleClick(e) {
+  const currentPlayer = circleTurn ? player2 : player1
+  console.log(currentPlayer.getName())
+  const cell = e.target.getAttribute('id')
+  currentPlayer.addSign(e.target.getAttribute('id'))
+  gameBoard.board[e.target.getAttribute('id')] = currentPlayer.getSign()
+  e.target.textContent = gameBoard.board[cell]
+  if (isWin(currentPlayer)) { 
+    endGame(false, currentPlayer)
+  } else if (isDraw()) {
+    endGame(true, currentPlayer)
+  } else {
+    swapPlayers()
+    
+  }
+
+  
+    
+}
+
+
+function isWin(currentPlayer) {
+    for (let i=0; i<gameBoard.winningCombinations.length; i++) {
+      if (currentPlayer.playerSigns.hasAll(gameBoard.winningCombinations[i])) {
+        return true
+      } 
+    } 
+    return false  
+}
+
+function isDraw() {
+  if (gameBoard.board.indexOf('') === -1) {
+
+      return true
+  } else return false
+}
 
 function restartGame() {
   gameBoard.board = ['', '', '', '', '', '', '', '', ''];
-  deleteCells();
-  createCells();
+  const cellElements = document.querySelectorAll('.game-cell')
+  
+  cellElements.forEach(cell => {
+    cell.textContent = ''
+  })
   player1.clearSigns();
   player2.clearSigns();
-  addRestartButton()
+  startRound()
 }
 
-//✕ ◯
-
-function isWin(player) {
-    for (let i=0; i<gameBoard.winningCombinations.length; i++) {
-      if (player.playerSigns.hasAll(gameBoard.winningCombinations[i])) {
-        
-        popup.classList.toggle("show");
-        restartGame()
-        break
-      } 
-    }
-
-      
+function swapPlayers() {
+    circleTurn = !circleTurn
 }
 
-function changeScore (player1Score, player2Score) {
-    score.textContent=`${player1Score} - ${player2Score}`
+function displayScore (player1Score, player2Score) {
+  playersScore.textContent=`${player1Score}-${player2Score}`
 }
 
-/* 
-function step(player) {
 
-} */
 
-function endGame(winner) {
-    winner.addScore();
-    //gameBoard.board.clear();
+function endGame(draw, player) {
+  if (draw) { 
+  popup.textContent = `Draw!`
+  popup.classList.toggle("show") 
+  } else {
+    popup.textContent = `${player.getName()} wins!`
+    popup.classList.toggle("show")
+    player.addScore()
+    restartGame()
+    displayScore(player1.getScore(), player2.getScore())
     player1.clearSigns();
     player2.clearSigns();
-    //endgamemessage();
-    changeScore(player1.playerScore, player2.playerScore);
-    createCells();
   }
-
+  
+    
+  }
