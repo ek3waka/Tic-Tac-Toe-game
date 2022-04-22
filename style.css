@@ -147,7 +147,7 @@ main {
     align-items: center;
 }
 
-.players-score {
+.playersScore {
     font-size: 1.75rem;
 }
 
@@ -239,3 +239,4 @@ body .show {
     from {opacity: 0;}
     to {opacity:1 ;}
 }
+

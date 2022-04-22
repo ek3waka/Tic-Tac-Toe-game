@@ -203,10 +203,8 @@ const gameModule = (function() {
       player.addScore()
     }
       restartGame()
-      displayScore(player1.getScore(), player2.getScore())
-      player1.clearSigns()
-      player2.clearSigns()
     }
+    
   return {
     startGame
     }
